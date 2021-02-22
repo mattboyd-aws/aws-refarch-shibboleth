@@ -16,5 +16,5 @@ Though the configuration for these services is similar and there is a lot of ove
 
 
 ## Complete Example Config
-For advanced users, an example configuration with annotations is available in the [shib-config-example](./shib-config-example) folder. (TODO)
+For advanced users, an example configuration with annotations is available in the [shib-config-example](./shib-config-example) folder. (TODO) 
 
