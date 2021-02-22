@@ -1,6 +1,6 @@
-# SAML Identity Provider CloudfFormation Templates
+# SAML Identity Provider CloudFormation Templates
 
-- [SAML Identity Provider CloudfFormation Templates](#saml-identity-provider-cloudfformation-templates)
+- [SAML Identity Provider CloudFormation Templates](#saml-identity-provider-cloudformation-templates)
   - [Overview](#overview)
   - [Templates](#templates)
     - [saml-id-cfn.yml](#saml-id-cfnyml)

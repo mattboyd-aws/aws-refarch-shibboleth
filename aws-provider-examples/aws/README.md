@@ -96,13 +96,7 @@ To query these attributes, we must configure an attribute resolver. To return th
         <InputDataConnector ref="myLDAP" attributeNames="userPrincipalName"/>
         <AttributeEncoder xsi:type="SAML2String" name="https://aws.amazon.com/SAML/Attributes/RoleSessionName" friendlyName="RoleSessionName" />
     </AttributeDefinition>
-    
-    <!-- Resolve userPrincipalName. NOTE: Verify that this  hasn't already been defined elsewhere in attribute-resolver.xml -->
-    <AttributeDefinition xsi:type="Simple" id="userPrincipalName">
-        <InputDataConnector ref="myLDAP" attributeNames="userPrincipalName"/>
-        <AttributeEncoder xsi:type="SAML2String" name="userPrincipalName" friendlyName="userPrincipalName" encodeType="false" />
-    </AttributeDefinition>     
-    
+      
     <!-- 
         LakeFormation Attribute Definitions
         https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-lf-federation.html 
@@ -118,6 +112,12 @@ To query these attributes, we must configure an attribute resolver. To return th
             </ValueMap>
     </AttributeDefinition>
 
+    <!-- Returns userPrincipalName as the Username attribute for federated Lake Formation permissions -->
+    <AttributeDefinition id="lakeFormationUsername" xsi:type="Simple">
+        <InputDataConnector ref="myLDAP" attributeNames="userPrincipalName"/>
+        <AttributeEncoder xsi:type="SAML2String" name="https://lakeformation.amazon.com/SAML/Attributes/Username" friendlyName="Username" />
+    </AttributeDefinition>
+
     <!-- 
         Redshift Attribute Defintions
         https://docs.aws.amazon.com/redshift/latest/mgmt/configuring-saml-assertions.html 
@@ -131,8 +131,7 @@ To query these attributes, we must configure an attribute resolver. To return th
             <SourceValue>CN=Redshift-(\w*),.*</SourceValue>
             </ValueMap>
     </AttributeDefinition>
-    
-
+    <!-- Returns sAMAccountName as the Redshift username. Redshift usernames do not allow '@' characters, therefore userPrincipalName cannot be used. -->
     <AttributeDefinition id="redshiftUsername" xsi:type="Simple">
         <InputDataConnector ref="myLDAP" attributeNames="sAMAccountName"/>
         <AttributeEncoder xsi:type="SAML2String" name="https://redshift.amazon.com/SAML/Attributes/DbUser" friendlyName="DbUser" />
@@ -344,7 +343,7 @@ When testing and troubleshooting authentication, it is recommended that you inst
     If there are no roles listed or an error is returned at the AWS Signin page, and there is an issue with your Shibboleth configuration or you are not a member of any LDAP groups that follow the naming convention `AWS-[account-id]-[role-name]`. You'll need to troubleshoot this.
 
 ## Troubleshooting
-Below are common issues and steps to troubleshoot. It may also be helpful to look at the [example Shibboleth configuration files](shibconfig-example/) for comparison.
+Below are common issues and steps to troubleshoot. It may also be helpful to look at the [example Shibboleth configuration files](./shib-config-example/) for comparison.
 
 You can also look at the logs on the Shibboleth server:
 - `/opt/shibboleth-idp/logs`
