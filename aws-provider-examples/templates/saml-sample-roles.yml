@@ -1,0 +1,210 @@
+
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Demonstrates creation of SAML Identity Provider with Custom Resource. '
+
+Parameters:
+  SAMLProviderArn:
+    Description: The ARN of the SAML Identity Provider that will be permitted to assume roles created.
+    Type: String
+    Default: ''
+  MaxSessionDuration:
+    Description: The max session duration, in seconds. Default is 3600 seconds (1 hour).
+    Type: Number
+    Default: 3600
+    MinValue: 3600
+    MaxValue: 43200
+
+Resources:
+  AccountAdmin:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-AccountAdmin
+      Description: Grants full access, including ability to edit IAM users. This should ONLY be used by AWS service admins or for exceptions. Use AWS-PowerUser role by default.
+      MaxSessionDuration: !Ref MaxSessionDuration        
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        -  arn:aws:iam::aws:policy/AdministratorAccess
+  PowerUser:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-PowerUser
+      Description: Provides full access to AWS services and resources, but does not allow management of Users and groups. 
+      MaxSessionDuration: !Ref MaxSessionDuration    
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        -  arn:aws:iam::aws:policy/PowerUserAccess
+  NetworkAdmin:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-NetworkAdmin
+      Description: Grants full access permissions to AWS services and actions required to set up and configure AWS network resources. 
+      MaxSessionDuration: !Ref MaxSessionDuration    
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        -  arn:aws:iam::aws:policy/job-function/NetworkAdministrator
+  SysAdmin:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-SysAdmin
+      Description: Grants full access permissions necessary for resources required for application and development operations. 
+      MaxSessionDuration: !Ref MaxSessionDuration    
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        -  arn:aws:iam::aws:policy/job-function/SystemAdministrator
+  Developer:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-Developer
+      Description: Grants access permissions necessary for resources required for development on existing infrastructure and resources, limits creation of new resources.     
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        - arn:aws:iam::aws:policy/job-function/DataScientist
+
+  ReadOnly:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-ReadOnly
+      Description: Grants read access to all resources in the account. 
+      MaxSessionDuration: !Ref MaxSessionDuration
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        -  arn:aws:iam::aws:policy/ReadOnlyAccess
+  Billing:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-Billing
+      Description: Grants permissions for billing and cost management. This includes viewing account usage and viewing and modifying budgets and payment methods. 
+      MaxSessionDuration: !Ref MaxSessionDuration        
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        -  arn:aws:iam::aws:policy/job-function/Billing
+
+  ReadOnlyBillingPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Action: aws-portal:View*
+          Resource: '*'
+        - Effect: Deny
+          Action: aws-portal:*Account
+          Resource: '*'
+
+  ReadOnlyBilling:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: AWS-ReadOnlyBilling
+      Description: Grants Read Only access to the billing console.
+      MaxSessionDuration: !Ref MaxSessionDuration        
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          Effect: Allow
+          Principal: 
+            Federated: !Ref SAMLProviderArn
+          Action: "sts:AssumeRoleWithSAML"
+          Condition: 
+            StringEquals: 
+              saml:aud: "https://signin.aws.amazon.com/saml"
+      ManagedPolicyArns:      
+        -  !Ref ReadOnlyBillingPolicy
+
+Outputs:
+  SAMLProvider:
+    Description: Arn of the SAML Identity Provider
+    Value: !Ref SAMLProviderArn
+  AccountAdmin: 
+    Description: Grants full access, including ability to edit IAM users. This should ONLY be used by AWS service admins or for exceptions. Use AWS-PowerUser role by default.
+    Value: !Ref AccountAdmin
+  PowerUser: 
+    Value: !Ref PowerUser
+    Description: Provides full access to AWS services and resources, but does not allow management of Users and groups. 
+  SysAdmin:
+    Value: !Ref SysAdmin
+    Description: Grants full access permissions necessary for resources required for application and development operations. 
+  NetworkAdmin:
+    Value: !Ref NetworkAdmin
+    Description: Grants full access permissions necessary for managing networking in the account.  
+  Developer:
+    Value: !Ref Developer
+    Description: Grants access permissions necessary for resources required for development on existing infrastructure and resources, limits creation of new resources.     
+  ReadOnly:
+    Value: !Ref ReadOnly
+    Description: Grants read access to all resources in the account. 
+  Billing:
+    Description: Grants permissions for billing and cost management. This includes viewing account usage and viewing and modifying budgets and payment methods. 
+    Value: !Ref Billing
+  ReadOnlyBilling:
+    Value: !Ref ReadOnlyBilling
+    Description: Grants Read Only access to the billing console.
+
+
+
+        
+

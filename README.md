@@ -3,7 +3,7 @@
 ## Introduction
 
 * This Shibboleth IdP reference architecture will deploy a fully functional, scalable, and containerized Shibboleth IdP.  This reference architecture includes rotation of IdP sealer keys, utilizing AWS Secrets Manager and AWS Lambda. In addition, the certificates that are part of the IdP as well as some of the LDAP settings (including the username/password) are stored in AWS Secrets Manager.
-* This project is intended to be a starting point for getting the Shibboleth IdP up and running quickly and easily on AWS and provide the foundation to build a production ready deployment around.  Be aware that if you do delete the stack, it will delete your CodeCommit repository so your customizations will be lost.  Therefore, if you intend to use this for production, it would be a good idea to make a copy of the repo and host it in your own account and take precautions to safeguard your changes
+* This project is intended to be a starting point for getting the Shibboleth IdP up and running quickly and easily on AWS and provide the foundation to build a production ready deployment around.  Be aware that if you do delete the stack, it will delete your CodeCommit repository so your customizations will be lost.  Therefore, if you intend to use this for production, it would be a good idea to make a copy of the repo and host it in your own account and take precautions to safeguard your changes.
 
 ### Reference Architecture Components
 These components will be deployed as part of the reference architecture CloudFormation template.

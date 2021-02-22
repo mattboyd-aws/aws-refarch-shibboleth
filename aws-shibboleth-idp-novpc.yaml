@@ -106,25 +106,25 @@ Parameters:
 
   PublicSubnet1ID:
     Description: >
-      Enter the Subnet ID an existing public subnet
+      Enter the Subnet ID an existing public subnet. NOTE: Make Public Subnet 1 and Private Subnet 1 belong to the same AZ! 
     Type: AWS::EC2::Subnet::Id
     Default: ''
 
   PublicSubnet2ID:
     Description: >
-      Enter the Subnet ID an existing public subnet
+      Enter the Subnet ID an existing public subnet. NOTE: Make Public Subnet 2 and Private Subnet 2 belong to the same AZ! 
     Type: AWS::EC2::Subnet::Id
     Default: ''
 
   PrivateSubnet1ID:
     Description: >
-      Enter the Subnet ID an existing private subnet
+      Enter the Subnet ID an existing private subnet. NOTE: Make Public Subnet 1 and Private Subnet 1 belong to the same AZ! 
     Type: AWS::EC2::Subnet::Id
     Default: ''
 
   PrivateSubnet2ID:
     Description: >
-      Enter the Subnet ID an existing private subnet
+      Enter the Subnet ID an existing private subnet. NOTE: Make Public Subnet 1 and Private Subnet 1 belong to the same AZ! 
     Type: AWS::EC2::Subnet::Id
     Default: ''
 
